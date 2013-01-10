@@ -409,17 +409,16 @@ public class JSONWriter {
 
             Object key = entry.getKey();
             String expr = null;
+            if (key == null) {
+                LOG.error("Cannot build expression for null key in " + this.exprStack);
+                continue;
+            }
             if (this.buildExpr) {
-                if (key == null) {
-                    LOG.error("Cannot build expression for null key in " + this.exprStack);
+                expr = this.expandExpr(key.toString());
+                if (this.shouldExcludeProperty(expr)) {
                     continue;
-                } else {
-                    expr = this.expandExpr(key.toString());
-                    if (this.shouldExcludeProperty(expr)) {
-                        continue;
-                    }
-                    expr = this.setExprStack(expr);
                 }
+                expr = this.setExprStack(expr);
             }
             if (hasData) {
                 this.add(',');
